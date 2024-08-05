@@ -1,0 +1,4 @@
+ipycanvas
+ipywidgets
+rise
+jupyter-contrib-nbextensions
