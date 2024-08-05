@@ -39,10 +39,12 @@ def on_mouse_up(x, y):
     drawing = False
     
     canvas.clear_rect(mid + width/40, 0, mid, height)
-    pixels = ['  '.join(list(i)) for i in (canvas.get_image_data().sum(axis=2)[:,:int(mid)][::marker_size, ::marker_size] > 0).astype(int).astype(str)]
 
-    for row in range(len(pixels)):
-        canvas.stroke_text(pixels[row], int(width*0.55), font_size*row + int(height*0.1))
+    if x < mid:
+        pixels = ['  '.join(list(i)) for i in (canvas.get_image_data().sum(axis=2)[:,:int(mid)][::marker_size, ::marker_size] > 0).astype(int).astype(str)]
+
+        for row in range(len(pixels)):
+            canvas.stroke_text(pixels[row], int(width*0.55), font_size*row + int(height*0.1))
 
 
 canvas.on_mouse_down(on_mouse_down)
