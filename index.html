@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Picture-in-Pixels | Pictels!</title>
+</head>
+<body>
+  <canvas id="myCanvas" width="1500" height="750"></canvas>
+  
+  <script>
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const width = 1500, height = 750;
+    const mid = Math.floor(0.95 * width * 0.5);
+    
+    ctx.fillStyle = "#DA7297";
+    ctx.fillRect(mid, 0, width/40, height);
+    ctx.fillStyle = "#667BC6";
+    
+    const font_size = Math.floor(height * 0.064);
+    ctx.font = `${font_size}px serif`;
+    
+    let drawing = false;
+    const marker_size = Math.floor(height/10);
+    const zeros = Array.from({length: 9}, (_, i) => Array.from({length: 10}, (_, j) => [i, j])).flat();
+    
+    const index_to_base = i => marker_size * i;
+    const base_to_index = x => Math.round((x - marker_size/2) / marker_size);
+    
+    for (const [i, j] of zeros) {
+      ctx.strokeText('0', mid + width/20 + index_to_base(i), index_to_base(j) + font_size);
+    }
+    
+    const myround = (x, base = marker_size) => base * base_to_index(x);
+    
+    const on_mouse_down = (x, y) => {
+      drawing = true;
+      
+      if (Math.abs(x - mid) <= width/40) {
+        ctx.clearRect(0, 0, mid, height);
+        ctx.clearRect(mid + width/40, 0, mid, height);
+        zeros.length = 0;
+        for (let i = 0; i < 9; i++) {
+          for (let j = 0; j < 10; j++) {
+            zeros.push([i, j]);
+          }
+        }
+        for (const [i, j] of zeros) {
+          ctx.strokeText('0', mid + width/20 + index_to_base(i), index_to_base(j) + font_size);
+        }
+      }
+    };
+    
+    const on_mouse_move = (x, y) => {
+      if (!drawing) return;
+      
+      if (x < mid - width/40) {
+        ctx.fillRect(myround(x), myround(y), marker_size, marker_size);
+        ctx.clearRect(mid + width/20 + myround(x) - font_size/4, myround(y) + font_size/4, font_size, font_size);
+        ctx.strokeText('1', mid + width/20 + myround(x), myround(y) + font_size);
+      }
+    };
+    
+    const on_mouse_up = (x, y) => {
+      drawing = false;
+    };
+    
+    canvas.addEventListener('mousedown', e => on_mouse_down(e.offsetX, e.offsetY));
+    canvas.addEventListener('mousemove', e => on_mouse_move(e.offsetX, e.offsetY));
+    canvas.addEventListener('mouseup', e => on_mouse_up(e.offsetX, e.offsetY));
+  </script>
+</body>
+</html>
